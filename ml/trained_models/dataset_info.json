@@ -1,0 +1,12 @@
+{
+  "total_samples": 303,
+  "features_count": 13,
+  "train_samples": 242,
+  "test_samples": 61,
+  "positive_samples": 139,
+  "negative_samples": 164,
+  "positive_percentage": 45.9,
+  "negative_percentage": 54.1,
+  "source": "UCI Machine Learning Repository - Cleveland Heart Disease Dataset",
+  "target_variable": "Presence of Heart Disease (0: No, 1: Yes)"
+}

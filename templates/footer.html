@@ -1,0 +1,67 @@
+<footer class="glass-panel border-t border-slate-800/80 mt-20 relative z-10 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+            <!-- Col 1: Project Identity -->
+            <div class="md:col-span-2 space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center shadow-md shadow-brand-500/20">
+                        <i class="fa-solid fa-heart-pulse text-white text-base"></i>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-white">CardioPulse Analytics</span>
+                </div>
+                <p class="text-sm text-slate-400 max-w-md leading-relaxed">
+                    Hybrid Machine Learning Classification Technique for Improved Accuracy of Heart Disease Prediction.
+                    Combining ensemble soft voting with rigorous stratified cross-validation on clinical coronary datasets.
+                </p>
+                <div class="flex items-center space-x-2 text-xs text-slate-500">
+                    <span class="px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">Django 6.1</span>
+                    <span class="px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">Scikit-learn 1.9</span>
+                    <span class="px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">UCI Cleveland Dataset</span>
+                </div>
+            </div>
+
+            <!-- Col 2: Navigation -->
+            <div>
+                <h4 class="text-xs font-semibold text-slate-200 uppercase tracking-wider mb-3">Navigation</h4>
+                <ul class="space-y-2 text-sm text-slate-400">
+                    <li><a href="{% url 'home' %}" class="hover:text-brand-300 transition-colors">Home Landing</a></li>
+                    <li><a href="{% url 'model_performance' %}" class="hover:text-brand-300 transition-colors">Model Benchmarking</a></li>
+                    <li><a href="{% url 'model_insights' %}" class="hover:text-brand-300 transition-colors">Academic Insights & ROC</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'dashboard' %}" class="hover:text-brand-300 transition-colors">Physician Dashboard</a></li>
+                    <li><a href="{% url 'predict' %}" class="hover:text-brand-300 transition-colors">New Patient Assessment</a></li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}" class="hover:text-brand-300 transition-colors">Researcher Login</a></li>
+                    <li><a href="{% url 'register' %}" class="hover:text-brand-300 transition-colors">Create Account</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Col 3: Research Methodology -->
+            <div>
+                <h4 class="text-xs font-semibold text-slate-200 uppercase tracking-wider mb-3">Hybrid Algorithms</h4>
+                <ul class="space-y-2 text-sm text-slate-400">
+                    <li><span class="text-slate-300 font-medium">Soft Voting Ensemble</span> (Primary)</li>
+                    <li><span class="text-slate-300 font-medium">Stacking Classifier</span> (Meta-Learner)</li>
+                    <li>Random Forest & Gradient Boosting</li>
+                    <li>Support Vector Machine (RBF)</li>
+                    <li>Logistic Regression & KNN</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Prominent Educational Disclaimer Box -->
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-400 leading-relaxed flex items-start space-x-3 mb-8">
+            <i class="fa-solid fa-shield-heart text-brand-400 text-lg mt-0.5 flex-shrink-0"></i>
+            <div>
+                <strong class="text-slate-300 font-semibold block mb-1">Academic & Educational Disclaimer:</strong>
+                This web application is developed strictly for educational, scientific research, and academic evaluation purposes. It does NOT constitute medical advice, clinical diagnosis, or a treatment recommendation. Clinical decisions must always be conducted by qualified cardiologists and certified healthcare practitioners utilizing certified diagnostic equipment.
+            </div>
+        </div>
+
+        <div class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+            <p>&copy; 2026 CardioPulse AI. Academic Major Project in Machine Learning & Healthcare Analytics.</p>
+            <p class="mt-2 sm:mt-0">Designed with modern full-stack Django, Tailwind CSS & Scikit-learn.</p>
+        </div>
+    </div>
+</footer>

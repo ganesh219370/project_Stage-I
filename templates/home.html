@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+
+{% block title %}CardioPulse AI — Hybrid Machine Learning Heart Disease Classification{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24">
+    <!-- Hero Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Hero Left Content -->
+            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                <!-- Research Badge -->
+                <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-300 text-xs font-semibold tracking-wide uppercase">
+                    <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
+                    <span>Academic Machine Learning Project</span>
+                </div>
+
+                <!-- Main Heading -->
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                    Intelligent Heart Disease <span class="gradient-text-teal">Prediction</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-lg sm:text-xl text-slate-300 max-w-2xl font-normal leading-relaxed">
+                    Hybrid Machine Learning Classification Technique for Improved Accuracy of Heart Disease Prediction.
+                    Combining diverse classifiers through probabilistic soft voting to overcome individual model variance and deliver robust clinical risk stratification.
+                </p>
+
+                <!-- Key Stat Badges -->
+                <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto lg:mx-0 pt-2 pb-2">
+                    <div class="glass-panel p-3.5 rounded-xl border border-slate-700/60 text-center">
+                        <span class="text-2xl font-bold text-brand-400 font-mono">{{ hybrid_metrics.test_accuracy|default:"86.89" }}%</span>
+                        <p class="text-[11px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">Ensemble Acc</p>
+                    </div>
+                    <div class="glass-panel p-3.5 rounded-xl border border-slate-700/60 text-center">
+                        <span class="text-2xl font-bold text-cyan-400 font-mono">{{ hybrid_metrics.test_auc|default:"95.13" }}%</span>
+                        <p class="text-[11px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">ROC-AUC Score</p>
+                    </div>
+                    <div class="glass-panel p-3.5 rounded-xl border border-slate-700/60 text-center">
+                        <span class="text-2xl font-bold text-indigo-400 font-mono">13</span>
+                        <p class="text-[11px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">Clinical Features</p>
+                    </div>
+                </div>
+
+                <!-- CTA Actions -->
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-3 sm:space-y-0 sm:space-x-4 pt-3">
+                    <a href="{% url 'predict' %}" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 text-white font-semibold text-base shadow-xl shadow-brand-500/25 hover:shadow-brand-500/40 transition-all flex items-center justify-center space-x-2 group">
+                        <i class="fa-solid fa-stethoscope group-hover:scale-110 transition-transform"></i>
+                        <span>Start Prediction</span>
+                    </a>
+                    <a href="{% url 'model_performance' %}" class="w-full sm:w-auto px-7 py-3.5 rounded-xl glass-panel-light hover:bg-slate-800 text-slate-200 hover:text-white font-semibold text-base border border-slate-700 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-chart-pie text-cyan-400"></i>
+                        <span>Explore Model</span>
+                    </a>
+                </div>
+
+                <div class="flex items-center justify-center lg:justify-start space-y-1 sm:space-y-0 sm:space-x-4 text-xs text-slate-400 pt-2">
+                    <span class="flex items-center"><i class="fa-solid fa-check text-brand-400 mr-1.5"></i> Authentic Cleveland Dataset</span>
+                    <span class="flex items-center"><i class="fa-solid fa-check text-brand-400 mr-1.5"></i> Real 5-Fold Cross-Validation</span>
+                </div>
+            </div>
+
+            <!-- Hero Right Visual -->
+            <div class="lg:col-span-5 relative">
+                <div class="relative mx-auto max-w-md">
+                    <!-- Glow Behind Card -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-brand-500 to-indigo-600 rounded-3xl blur-xl opacity-30 animate-pulse-slow"></div>
+
+                    <!-- Main Interactive Visual Card -->
+                    <div class="relative glass-panel rounded-2xl p-6 border border-slate-700/80 shadow-2xl space-y-5">
+                        
+                        <!-- Top Bar with Heartbeat Icon -->
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                                    <i class="fa-solid fa-heart-pulse text-lg animate-bounce"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-semibold text-white">Clinical Risk Engine</h3>
+                                    <p class="text-xs text-slate-400">Multi-Model Ensemble Active</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-mono border border-emerald-500/30 flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Pipeline Live
+                            </span>
+                        </div>
+
+                        <!-- ECG Waveform Animation Canvas / SVG -->
+                        <div class="bg-navy-900/90 rounded-xl p-3 border border-slate-800">
+                            <div class="flex justify-between items-center text-[10px] text-slate-400 font-mono mb-1">
+                                <span>LEAD II • ST SEGMENT ANALYSIS</span>
+                                <span class="text-brand-400">NORMAL SINUS RHYTHM</span>
+                            </div>
+                            <svg class="w-full h-16 text-brand-400 ecg-line" viewBox="0 0 500 100" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M0,50 L80,50 L95,50 L105,40 L115,55 L125,50 L140,50 L150,15 L160,85 L170,30 L180,60 L190,50 L230,50 L245,45 L260,50 L300,50 L315,50 L325,40 L335,55 L345,50 L360,50 L370,15 L380,85 L390,30 L400,60 L410,50 L450,50 L465,45 L480,50 L500,50" />
+                            </svg>
+                        </div>
+
+                        <!-- Model Comparison Mini Cards -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between text-xs font-medium text-slate-400 px-1">
+                                <span>Classifier Component</span>
+                                <span>Decision Weight</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center justify-between text-xs">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-tree text-emerald-400"></i>
+                                    <span class="text-slate-200 font-medium">Random Forest Classifier</span>
+                                </div>
+                                <span class="font-mono text-emerald-400 font-semibold">1.5x (Top Single)</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center justify-between text-xs">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-chart-line text-cyan-400"></i>
+                                    <span class="text-slate-200 font-medium">Logistic Regression</span>
+                                </div>
+                                <span class="font-mono text-cyan-400 font-semibold">1.0x (Calibrated)</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center justify-between text-xs">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-shapes text-indigo-400"></i>
+                                    <span class="text-slate-200 font-medium">Support Vector Machine (RBF)</span>
+                                </div>
+                                <span class="font-mono text-indigo-400 font-semibold">1.2x (Margin)</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center justify-between text-xs">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-bolt text-amber-400"></i>
+                                    <span class="text-slate-200 font-medium">Gradient Boosting</span>
+                                </div>
+                                <span class="font-mono text-amber-400 font-semibold">1.2x (Residuals)</span>
+                            </div>
+                        </div>
+
+                        <!-- Hybrid Ensemble Result Banner -->
+                        <div class="p-3.5 rounded-xl bg-gradient-to-r from-brand-950/80 to-slate-900 border border-brand-500/40 flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5">
+                                <i class="fa-solid fa-layer-group text-brand-400 text-base"></i>
+                                <div>
+                                    <div class="text-xs font-bold text-white uppercase tracking-wider">Hybrid Voting Model</div>
+                                    <div class="text-[10px] text-slate-400">Soft Probabilistic Integration</div>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded bg-brand-500/20 text-brand-300 font-mono text-xs font-bold border border-brand-500/30">
+                                Robust Consensus
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Core Architectural Features Grid -->
+<section class="py-16 bg-navy-900/40 border-y border-slate-800/60 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-14 space-y-3">
+            <span class="text-xs font-bold text-brand-400 uppercase tracking-widest font-mono">Platform Architecture</span>
+            <h2 class="text-3xl font-extrabold text-white">Engineered for Academic Precision & Healthcare Reliability</h2>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                Combining scikit-learn classification algorithms with an end-to-end ColumnTransformer pipeline, cross-validation, and user isolation.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Feature 1 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-brand-500/40 transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-brand-300 transition-colors">Hybrid ML Prediction</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Weighted soft voting ensemble combining Logistic Regression, Random Forest, SVM, and Gradient Boosting to reduce variance and improve test accuracy.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-cyan-500/40 transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-chart-column"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">Multi-Model Analysis</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Evaluates 6 standalone algorithms side-by-side with our ensemble: Decision Trees, KNN, SVM, Logistic Regression, Random Forest, and Gradient Boosting.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/40 transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">Patient Risk Assessment</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Computes exact disease probabilities and categorizes outcomes into High, Moderate, and Low risk thresholds with clinical indicator flags.
+                </p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/40 transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">Prediction History & CSV</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Stores all authenticated user assessments in SQLite/PostgreSQL with patient search, risk filtering, sorting, pagination, and one-click CSV export.
+                </p>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-purple-500/40 transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">Model Benchmarking</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Interactive Chart.js visualizations for Accuracy, Precision, Recall, F1-Score, ROC-AUC curves, and confusion matrices calculated on test partitions.
+                </p>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-rose-500/40 transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-rose-300 transition-colors">Data-Driven Insights</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Empirical feature importance rankings from tree-based estimators and theoretical analysis demonstrating why hybrid classification works.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- "How It Works" Section -->
+<section class="py-20 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            <span class="text-xs font-bold text-brand-400 uppercase tracking-widest font-mono">Workflow Pipeline</span>
+            <h2 class="text-3xl font-extrabold text-white">How CardioPulse Analyzes Patient Records</h2>
+            <p class="text-slate-400 text-sm">
+                From physiological inputs to soft voting consensus in 5 automated phases.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+            
+            <!-- Step 1 -->
+            <div class="glass-panel p-5 rounded-2xl border border-slate-800 text-center space-y-3">
+                <div class="w-10 h-10 rounded-full bg-brand-500/20 text-brand-300 font-mono font-bold text-sm mx-auto flex items-center justify-center border border-brand-500/40">1</div>
+                <h4 class="text-sm font-bold text-white">Clinical Inputs</h4>
+                <p class="text-xs text-slate-400">Doctor enters 13 validated patient attributes (BP, cholesterol, ECG, thal, oldpeak).</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="glass-panel p-5 rounded-2xl border border-slate-800 text-center space-y-3">
+                <div class="w-10 h-10 rounded-full bg-cyan-500/20 text-cyan-300 font-mono font-bold text-sm mx-auto flex items-center justify-center border border-cyan-500/40">2</div>
+                <h4 class="text-sm font-bold text-white">Preprocessing</h4>
+                <p class="text-xs text-slate-400">ColumnTransformer applies median imputation and StandardScaler to continuous values.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="glass-panel p-5 rounded-2xl border border-slate-800 text-center space-y-3">
+                <div class="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-300 font-mono font-bold text-sm mx-auto flex items-center justify-center border border-indigo-500/40">3</div>
+                <h4 class="text-sm font-bold text-white">Multi-Model Run</h4>
+                <p class="text-xs text-slate-400">All 6 individual classification algorithms generate independent probability estimates.</p>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="glass-panel p-5 rounded-2xl border border-slate-800 text-center space-y-3">
+                <div class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-300 font-mono font-bold text-sm mx-auto flex items-center justify-center border border-purple-500/40">4</div>
+                <h4 class="text-sm font-bold text-white">Hybrid Ensemble</h4>
+                <p class="text-xs text-slate-400">Soft Voting combines predicted probabilities using calibrated model confidence weights.</p>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="glass-panel p-5 rounded-2xl border border-slate-800 text-center space-y-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold text-sm mx-auto flex items-center justify-center border border-emerald-500/40">5</div>
+                <h4 class="text-sm font-bold text-white">Clinical Report</h4>
+                <p class="text-xs text-slate-400">Final prediction, confidence gauge, model breakdown, and clinical factors are rendered.</p>
+            </div>
+
+        </div>
+
+        <div class="mt-14 text-center">
+            <a href="{% url 'predict' %}" class="inline-flex items-center space-x-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 text-white font-semibold shadow-lg shadow-brand-500/25 transition-all">
+                <i class="fa-solid fa-stethoscope"></i>
+                <span>Try an Assessment Now</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+    <div class="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-navy-900 via-brand-950 to-navy-900 border border-brand-500/30 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-8 space-y-3 text-center lg:text-left">
+                <span class="text-xs font-mono uppercase tracking-wider text-brand-300 font-bold">Research & Evaluation</span>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-white">Explore Real Scientific Evaluation Metrics</h3>
+                <p class="text-slate-300 text-sm leading-relaxed max-w-2xl">
+                    Every metric displayed across this platform is computed directly from our 5-fold cross-validated Cleveland training pipeline. Examine confusion matrices, ROC-AUC comparisons, and feature importances.
+                </p>
+            </div>
+            <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col space-y-3 sm:space-y-0 sm:space-x-3 lg:space-x-0 lg:space-y-3 justify-center">
+                <a href="{% url 'model_performance' %}" class="px-6 py-3 rounded-xl bg-white text-navy-950 hover:bg-slate-100 font-bold text-sm text-center shadow-lg transition-all">
+                    View Benchmark Table
+                </a>
+                <a href="{% url 'model_insights' %}" class="px-6 py-3 rounded-xl glass-panel-light hover:bg-slate-800 text-slate-200 font-semibold text-sm text-center border border-slate-700 transition-all">
+                    Read Model Insights
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

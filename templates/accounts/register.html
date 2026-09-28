@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account — CardioPulse AI Platform{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-5xl glass-panel rounded-3xl border border-slate-700/80 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        
+        <!-- Left Column: Academic & Research Architecture Overview -->
+        <div class="lg:col-span-5 bg-gradient-to-br from-navy-900 via-brand-950 to-slate-900 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800 relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-60 h-60 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-60 h-60 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 space-y-6">
+                <!-- Brand Badge -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                        <i class="fa-solid fa-heart-pulse text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white tracking-tight">CardioPulse AI</h2>
+                        <p class="text-[11px] text-slate-400">Research & Clinical Decision Support</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2">
+                    <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-xs font-mono font-medium border border-brand-500/30">
+                        Join the Clinical Network
+                    </span>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white leading-snug">
+                        Experience Next-Gen Hybrid Cardiology AI
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        Create your researcher profile to assess clinical patient profiles, compare ensemble algorithms, and export predictive reports.
+                    </p>
+                </div>
+
+                <!-- 3 Pillars list -->
+                <div class="space-y-3 pt-2">
+                    <div class="flex items-start space-x-3 text-xs text-slate-300">
+                        <div class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-check text-[10px]"></i>
+                        </div>
+                        <div>
+                            <strong class="text-white block font-semibold">Ensemble Performance</strong>
+                            Soft-voting classifier reduces single-model variance by combining probabilistic outputs.
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3 text-xs text-slate-300">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-check text-[10px]"></i>
+                        </div>
+                        <div>
+                            <strong class="text-white block font-semibold">13 Clinical Parameters</strong>
+                            Includes resting BP, ST depression, fluoroscopy vessels, and thallium scintigraphy.
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3 text-xs text-slate-300">
+                        <div class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-check text-[10px]"></i>
+                        </div>
+                        <div>
+                            <strong class="text-white block font-semibold">Patient Isolation & Security</strong>
+                            User-specific history with instant CSV data exports and audit logging.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer note -->
+            <div class="relative z-10 pt-8 border-t border-slate-800/80 text-[11px] text-slate-400">
+                Major Project in Machine Learning & Health Informatics.
+            </div>
+        </div>
+
+        <!-- Right Column: Registration Form -->
+        <div class="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-center bg-navy-950/60">
+            <div class="max-w-md w-full mx-auto space-y-6">
+                
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Create your account</h2>
+                    <p class="text-sm text-slate-400 mt-1">Start running intelligent heart disease risk classifications.</p>
+                </div>
+
+                <form method="POST" action="{% url 'register' %}" id="regForm" class="space-y-4">
+                    {% csrf_token %}
+
+                    <!-- Full Name -->
+                    <div class="space-y-1.5">
+                        <label for="id_first_name" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                            Full Name
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-regular fa-id-badge text-sm"></i>
+                            </span>
+                            {{ form.first_name }}
+                        </div>
+                        {% if form.first_name.errors %}
+                        <p class="text-xs text-rose-400 mt-1">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Username -->
+                    <div class="space-y-1.5">
+                        <label for="id_username" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                            Username
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-regular fa-user text-sm"></i>
+                            </span>
+                            {{ form.username }}
+                        </div>
+                        {% if form.username.errors %}
+                        <p class="text-xs text-rose-400 mt-1">{{ form.username.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-1.5">
+                        <label for="id_email" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                            Email Address
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-regular fa-envelope text-sm"></i>
+                            </span>
+                            {{ form.email }}
+                        </div>
+                        {% if form.email.errors %}
+                        <p class="text-xs text-rose-400 mt-1">{{ form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password Fields Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label for="id_password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                                Password
+                            </label>
+                            <div class="relative">
+                                {{ form.password }}
+                                <button type="button" onclick="togglePasswordVisibility('id_password', 'p1Toggle')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200">
+                                    <i class="fa-regular fa-eye text-xs" id="p1Toggle"></i>
+                                </button>
+                            </div>
+                            {% if form.password.errors %}
+                            <p class="text-xs text-rose-400 mt-1">{{ form.password.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label for="id_confirm_password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                                Confirm Password
+                            </label>
+                            <div class="relative">
+                                {{ form.confirm_password }}
+                                <button type="button" onclick="togglePasswordVisibility('id_confirm_password', 'p2Toggle')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200">
+                                    <i class="fa-regular fa-eye text-xs" id="p2Toggle"></i>
+                                </button>
+                            </div>
+                            {% if form.confirm_password.errors %}
+                            <p class="text-xs text-rose-400 mt-1">{{ form.confirm_password.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Terms & Educational Disclaimer Checkbox -->
+                    <div class="pt-2">
+                        <label class="flex items-start space-x-2.5 text-xs text-slate-300 cursor-pointer">
+                            {{ form.agree_terms }}
+                            <span class="leading-tight">
+                                I agree to the <span class="text-brand-300">academic terms of use</span> and acknowledge that this system is for research & educational evaluation.
+                            </span>
+                        </label>
+                        {% if form.agree_terms.errors %}
+                        <p class="text-xs text-rose-400 mt-1">{{ form.agree_terms.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="regSubmitBtn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 text-white font-bold text-sm shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition-all flex items-center justify-center space-x-2">
+                        <span>Complete Registration</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+
+                <div class="text-center text-xs text-slate-400 pt-2">
+                    Already registered? 
+                    <a href="{% url 'login' %}" class="text-brand-400 hover:text-brand-300 font-semibold transition-colors">
+                        Sign In here
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function togglePasswordVisibility(fieldId, iconId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(iconId);
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    document.getElementById('regForm')?.addEventListener('submit', function() {
+        const btn = document.getElementById('regSubmitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Registering Account...';
+    });
+</script>
+{% endblock %}

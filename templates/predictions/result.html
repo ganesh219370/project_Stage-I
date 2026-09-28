@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+
+{% block title %}Assessment Result — {{ record.patient_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 print:p-0">
+
+    <!-- Top Action Navigation (No-print) -->
+    <div class="flex items-center justify-between no-print">
+        <a href="{% url 'prediction_history' %}" class="inline-flex items-center space-x-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to History</span>
+        </a>
+        <div class="flex items-center space-x-3">
+            <button onclick="window.print()" class="px-4 py-2 rounded-xl glass-panel-light hover:bg-slate-800 text-slate-200 font-semibold text-xs border border-slate-700 transition-all flex items-center space-x-2">
+                <i class="fa-solid fa-print"></i>
+                <span>Print / Save PDF Report</span>
+            </button>
+            <a href="{% url 'predict' %}" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 text-white font-bold text-xs shadow-md shadow-brand-500/20 transition-all flex items-center space-x-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>New Assessment</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN RESULT HERO CARD -->
+    <div class="glass-panel rounded-3xl p-6 sm:p-10 border {% if record.prediction == 1 %}gradient-border-rose bg-rose-950/20{% else %}gradient-border-emerald bg-emerald-950/20{% endif %} shadow-2xl relative overflow-hidden print-card">
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+            
+            <!-- Left Info: Result Badge & Description -->
+            <div class="md:col-span-8 space-y-4">
+                <div class="flex items-center space-x-3">
+                    <span class="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider {% if record.prediction == 1 %}bg-rose-500/20 text-rose-300 border border-rose-500/40{% else %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/40{% endif %}">
+                        <i class="fa-solid {% if record.prediction == 1 %}fa-triangle-exclamation mr-1.5 animate-pulse{% else %}fa-circle-check mr-1.5{% endif %}"></i>
+                        {{ record.risk_level }}
+                    </span>
+                    <span class="text-xs text-slate-400 font-mono">
+                        {{ record.created_at|date:"M d, Y • H:i T" }}
+                    </span>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Subject: {{ record.patient_name }}</span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white">
+                        {% if record.prediction == 1 %}
+                        <span class="text-rose-400">Heart Disease Risk Detected</span>
+                        {% else %}
+                        <span class="text-emerald-400">No Heart Disease Risk Detected</span>
+                        {% endif %}
+                    </h1>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed max-w-xl">
+                    {% if record.prediction == 1 %}
+                    The primary Hybrid Soft Voting ensemble identifies clinical indicators consistent with coronary artery disease. Further diagnostic evaluation and formal cardiology consultation are recommended.
+                    {% else %}
+                    The primary Hybrid Soft Voting ensemble indicates a low probability of coronary artery disease based on the 13 clinical attributes provided.
+                    {% endif %}
+                </p>
+
+                <!-- Model Tag -->
+                <div class="pt-2 flex items-center space-x-2 text-xs text-slate-400">
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-300 font-mono">
+                        Model: {{ record.model_name }}
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-800 text-brand-300 font-mono">
+                        Confidence: {{ record.confidence|floatformat:1 }}%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Right Circular Probability Gauge -->
+            <div class="md:col-span-4 flex flex-col items-center justify-center">
+                <div class="relative w-44 h-44 flex items-center justify-center">
+                    <!-- SVG Gauge -->
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" stroke="rgba(255, 255, 255, 0.08)" stroke-width="8" fill="none" />
+                        <circle cx="50" cy="50" r="42" 
+                            stroke="{% if record.prediction == 1 %}#f43f5e{% else %}#10b981{% endif %}" 
+                            stroke-width="8" 
+                            stroke-dasharray="264" 
+                            stroke-dashoffset="{{ 264|add:'0' }}" 
+                            stroke-linecap="round" 
+                            fill="none" 
+                            class="gauge-circle" 
+                            id="gaugeCircle" />
+                    </svg>
+                    <!-- Center Metric Text -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                        <span class="text-3xl font-extrabold text-white font-mono" id="probCounter">{{ record.probability|floatformat:1 }}%</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Disease Probability</span>
+                    </div>
+                </div>
+                <div class="mt-2 text-center text-xs text-slate-400 font-mono">
+                    {% if record.prediction == 1 %}
+                    Status: <span class="text-rose-400 font-bold">Positive Finding</span>
+                    {% else %}
+                    Status: <span class="text-emerald-400 font-bold">Negative Finding</span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODEL-BY-MODEL COMPARISON BREAKDOWN -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 print-card">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800 flex-wrap gap-4">
+            <div>
+                <h3 class="text-base font-bold text-white">Multi-Model Classification Breakdown</h3>
+                <p class="text-xs text-slate-400">Comparing individual classifier predictions against the Hybrid Voting Ensemble</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-brand-500/10 text-brand-300 text-xs font-mono border border-brand-500/30">
+                Calibrated Consensus
+            </span>
+        </div>
+
+        <!-- Model Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for name, val in record.individual_results.items %}
+            <div class="glass-panel-light p-4 rounded-2xl border border-slate-700/60 space-y-3 hover:border-slate-600 transition-colors">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-white truncate">{{ name }}</span>
+                    {% if val.prediction == 1 %}
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Positive</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Negative</span>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs font-mono text-slate-300">
+                        <span>Probability:</span>
+                        <span class="font-bold {% if val.prediction == 1 %}text-rose-400{% else %}text-emerald-400{% endif %}">{{ val.probability }}%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div class="h-full rounded-full {% if val.prediction == 1 %}bg-rose-500{% else %}bg-emerald-500{% endif %}" style="width: {{ val.probability }}%"></div>
+                    </div>
+                </div>
+
+                <div class="text-[11px] text-slate-400 flex justify-between">
+                    <span>Confidence:</span>
+                    <span class="text-slate-300 font-mono">{{ val.confidence }}%</span>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Hybrid Model Result Card Highlight -->
+            <div class="glass-panel-light p-4 rounded-2xl border-2 {% if record.prediction == 1 %}border-rose-500/40 bg-rose-950/15{% else %}border-emerald-500/40 bg-emerald-950/15{% endif %} space-y-3 sm:col-span-2 lg:col-span-3">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-layer-group text-brand-400 text-sm"></i>
+                        <span class="text-xs font-extrabold text-white uppercase tracking-wider">Primary Hybrid Voting Ensemble (Final Verdict)</span>
+                    </div>
+                    <span class="px-2.5 py-1 rounded text-xs font-bold font-mono {% if record.prediction == 1 %}bg-rose-500 text-white{% else %}bg-emerald-500 text-white{% endif %}">
+                        {{ record.risk_level }} ({{ record.probability|floatformat:1 }}%)
+                    </span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Integrates calibrated prediction probabilities across Logistic Regression, Random Forest, SVM, and Gradient Boosting. This soft-voting consensus dampens individual classifier anomalies.
+                </p>
+            </div>
+        </div>
+
+        <!-- Chart.js Model Probabilities Comparison Bar Chart (No-print) -->
+        <div class="pt-4 no-print">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Model Probability Comparison Chart</h4>
+            <div class="h-60 w-full">
+                <canvas id="modelComparisonChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLINICAL RISK FACTORS & RECAP -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 print-card">
+        
+        <!-- Flagged Risk Factors (5 Columns) -->
+        <div class="lg:col-span-5 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+            <div class="flex items-center space-x-2 pb-3 border-b border-slate-800">
+                <i class="fa-solid fa-clipboard-check text-brand-400"></i>
+                <h3 class="text-sm font-bold text-white">Notable Clinical Risk Indicators</h3>
+            </div>
+
+            <div class="space-y-3">
+                {% for factor in record.clinical_factors %}
+                <div class="p-3 rounded-xl {% if factor.level == 'high' %}bg-rose-950/30 border border-rose-500/30 text-rose-300{% else %}bg-amber-950/30 border border-amber-500/30 text-amber-300{% endif %} text-xs space-y-1">
+                    <div class="flex justify-between items-center font-bold">
+                        <span>{{ factor.parameter }}</span>
+                        <span class="font-mono text-[11px]">{{ factor.value }}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">{{ factor.status }}</p>
+                </div>
+                {% empty %}
+                <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/20 text-emerald-300 text-xs text-center space-y-1">
+                    <i class="fa-solid fa-circle-check text-lg mb-1 block"></i>
+                    <p class="font-bold">No Major High-Risk Clinical Flags</p>
+                    <p class="text-[11px] text-slate-400">Patient features remain within conventional physiological bounds.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if record.notes %}
+            <div class="pt-2 border-t border-slate-800">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Physician Notes:</h4>
+                <p class="text-xs text-slate-300 italic bg-slate-900/60 p-3 rounded-xl border border-slate-800">{{ record.notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Submitted 13 Parameters Table (7 Columns) -->
+        <div class="lg:col-span-7 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+            <div class="flex items-center space-x-2 pb-3 border-b border-slate-800">
+                <i class="fa-solid fa-list-check text-cyan-400"></i>
+                <h3 class="text-sm font-bold text-white">Recorded Patient Parameters</h3>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Age</span>
+                    <strong class="text-white">{{ record.age|floatformat:0 }} years</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Sex</span>
+                    <strong class="text-white">{{ record.sex_display }}</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Chest Pain</span>
+                    <strong class="text-white truncate block">{{ record.cp_display }}</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Resting BP</span>
+                    <strong class="text-white font-mono">{{ record.trestbps|floatformat:0 }} mm Hg</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Cholesterol</span>
+                    <strong class="text-white font-mono">{{ record.chol|floatformat:0 }} mg/dL</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Fasting BS</span>
+                    <strong class="text-white">{{ record.fbs_display }}</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Resting ECG</span>
+                    <strong class="text-white truncate block">{{ record.restecg_display }}</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Max Heart Rate</span>
+                    <strong class="text-white font-mono">{{ record.thalach|floatformat:0 }} bpm</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Ex. Angina</span>
+                    <strong class="text-white">{{ record.exang_display }}</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">ST Depression</span>
+                    <strong class="text-white font-mono">{{ record.oldpeak|floatformat:1 }} mm</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">ST Slope</span>
+                    <strong class="text-white">{{ record.slope_display }}</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Major Vessels</span>
+                    <strong class="text-white font-mono">{{ record.ca }} colored</strong>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 col-span-2 sm:col-span-3">
+                    <span class="text-slate-400 block text-[10px] uppercase font-mono">Thallium Scintigraphy</span>
+                    <strong class="text-white">{{ record.thal_display }}</strong>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Educational Disclaimer -->
+    <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 leading-relaxed flex items-start space-x-3">
+        <i class="fa-solid fa-shield-halved text-brand-400 text-base mt-0.5"></i>
+        <div>
+            <strong class="text-slate-300 font-semibold block mb-0.5">Academic Clinical Disclaimer:</strong>
+            This analysis is generated by a machine learning ensemble trained on the UCI Cleveland Heart Disease dataset. It is designed for educational and academic decision-support exploration and must not replace professional clinical diagnosis by certified cardiologists.
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate circular gauge
+        const gauge = document.getElementById('gaugeCircle');
+        const prob = {{ record.probability }};
+        if (gauge) {
+            const circumference = 264;
+            const offset = circumference - (prob / 100) * circumference;
+            setTimeout(() => {
+                gauge.style.strokeDashoffset = offset;
+            }, 200);
+        }
+
+        // Render Bar Chart for model probabilities
+        const modelNames = {{ model_names_json|safe }};
+        const modelProbs = {{ model_probs_json|safe }};
+        const ctx = document.getElementById('modelComparisonChart');
+
+        if (ctx && modelNames.length > 0) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: modelNames,
+                    datasets: [{
+                        label: 'Estimated Heart Disease Probability (%)',
+                        data: modelProbs,
+                        backgroundColor: modelNames.map(name => name.includes('Hybrid') ? '#2dd4bf' : 'rgba(148, 163, 184, 0.4)'),
+                        borderColor: modelNames.map(name => name.includes('Hybrid') ? '#0d9488' : 'rgba(148, 163, 184, 0.8)'),
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.06)' },
+                            ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 }, callback: v => v + '%' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#cbd5e1', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (item) => ` Risk Probability: ${item.raw}%`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

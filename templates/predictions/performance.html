@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% block title %}Model Performance & Benchmark — CardioPulse AI{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Top Banner -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="space-y-1 relative z-10">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-300 text-xs font-mono">
+                <i class="fa-solid fa-square-poll-vertical"></i>
+                <span>Empirical Machine Learning Evaluation</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Model Performance & Algorithm Benchmark</h1>
+            <p class="text-sm text-slate-300">
+                Rigorous empirical comparison of 6 standalone classifiers versus the Primary Hybrid Voting Ensemble & Stacking.
+            </p>
+        </div>
+
+        <div class="flex items-center space-x-2 text-xs font-mono text-slate-400 bg-slate-900/80 px-4 py-2.5 rounded-2xl border border-slate-800 relative z-10">
+            <i class="fa-solid fa-database text-brand-400"></i>
+            <span>Test Set: 61 Samples • 5-Fold CV</span>
+        </div>
+    </div>
+
+    <!-- 5 Core Metric Cards for Primary Hybrid Voting Classifier -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        
+        <!-- Accuracy -->
+        <div class="glass-panel p-5 rounded-2xl border border-brand-500/30 bg-brand-950/15 space-y-2">
+            <div class="flex items-center justify-between text-brand-300">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">Test Accuracy</span>
+                <i class="fa-solid fa-bullseye text-sm"></i>
+            </div>
+            <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.test_accuracy }}%</div>
+            <div class="text-[11px] text-slate-400">CV: <span class="text-brand-300 font-mono">{{ hybrid_row.cv_accuracy }}%</span> (±{{ hybrid_row.cv_accuracy_std }}%)</div>
+        </div>
+
+        <!-- Precision -->
+        <div class="glass-panel p-5 rounded-2xl border border-cyan-500/30 bg-cyan-950/15 space-y-2">
+            <div class="flex items-center justify-between text-cyan-300">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">Precision</span>
+                <i class="fa-solid fa-crosshairs text-sm"></i>
+            </div>
+            <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.test_precision }}%</div>
+            <div class="text-[11px] text-slate-400">Positive predictive value</div>
+        </div>
+
+        <!-- Recall (Sensitivity) -->
+        <div class="glass-panel p-5 rounded-2xl border border-emerald-500/30 bg-emerald-950/15 space-y-2">
+            <div class="flex items-center justify-between text-emerald-300">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">Recall / Sensitivity</span>
+                <i class="fa-solid fa-heart-pulse text-sm"></i>
+            </div>
+            <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.test_recall }}%</div>
+            <div class="text-[11px] text-slate-400">True positive detection rate</div>
+        </div>
+
+        <!-- F1 Score -->
+        <div class="glass-panel p-5 rounded-2xl border border-indigo-500/30 bg-indigo-950/15 space-y-2">
+            <div class="flex items-center justify-between text-indigo-300">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">F1-Score</span>
+                <i class="fa-solid fa-balance-scale text-sm"></i>
+            </div>
+            <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.test_f1 }}%</div>
+            <div class="text-[11px] text-slate-400">Harmonic precision-recall mean</div>
+        </div>
+
+        <!-- ROC-AUC -->
+        <div class="glass-panel p-5 rounded-2xl border border-purple-500/30 bg-purple-950/15 space-y-2">
+            <div class="flex items-center justify-between text-purple-300">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">ROC-AUC Area</span>
+                <i class="fa-solid fa-chart-area text-sm"></i>
+            </div>
+            <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.test_auc }}%</div>
+            <div class="text-[11px] text-slate-400">Discriminative power</div>
+        </div>
+
+    </div>
+
+    <!-- Interactive Comparison Chart Tabs -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div>
+                <h3 class="text-base font-bold text-white">Cross-Algorithm Metric Comparison</h3>
+                <p class="text-xs text-slate-400">Interactive Chart.js evaluation across all tested estimators</p>
+            </div>
+            
+            <!-- Metric Toggle Buttons -->
+            <div class="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800">
+                <button type="button" onclick="switchChartMetric('acc')" id="btn-acc" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-white transition-all">Accuracy</button>
+                <button type="button" onclick="switchChartMetric('f1')" id="btn-f1" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">F1-Score</button>
+                <button type="button" onclick="switchChartMetric('auc')" id="btn-auc" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">ROC-AUC</button>
+                <button type="button" onclick="switchChartMetric('prec')" id="btn-prec" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">Precision</button>
+                <button type="button" onclick="switchChartMetric('rec')" id="btn-rec" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">Recall</button>
+            </div>
+        </div>
+
+        <div class="h-80 w-full">
+            <canvas id="benchmarkComparisonChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Academic Research Comparison Table -->
+    <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-xl space-y-0">
+        <div class="p-6 border-b border-slate-800 flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <span class="text-xs font-mono uppercase text-brand-400 font-bold">Academic Evaluation</span>
+                <h3 class="text-lg font-bold text-white">Research Benchmark Table</h3>
+                <p class="text-xs text-slate-400">Stratified holdout test set (20%) & 5-fold cross-validation results</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-slate-800 text-xs font-mono text-slate-300">
+                Live Calculated Metrics
+            </span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-900/80 text-xs uppercase font-mono tracking-wider text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="px-6 py-4">Classification Algorithm</th>
+                        <th class="px-6 py-4">Type</th>
+                        <th class="px-6 py-4">Test Accuracy</th>
+                        <th class="px-6 py-4">Precision</th>
+                        <th class="px-6 py-4">Recall</th>
+                        <th class="px-6 py-4">F1 Score</th>
+                        <th class="px-6 py-4">ROC-AUC</th>
+                        <th class="px-6 py-4">5-Fold CV Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+                    {% for row in comparison_table %}
+                    <tr class="hover:bg-slate-800/40 transition-colors {% if row.is_hybrid %}bg-brand-950/20 font-bold{% endif %}">
+                        <td class="px-6 py-4 font-sans text-sm font-semibold {% if row.is_hybrid %}text-brand-300{% else %}text-white{% endif %} flex items-center space-x-2">
+                            {% if row.is_hybrid %}
+                            <i class="fa-solid fa-crown text-amber-400 text-xs"></i>
+                            {% endif %}
+                            <span>{{ row.model_name }}</span>
+                        </td>
+                        <td class="px-6 py-4 font-sans">
+                            {% if row.is_hybrid %}
+                            <span class="px-2 py-0.5 rounded text-[10px] bg-brand-500/20 text-brand-300 border border-brand-500/30">Hybrid Ensemble</span>
+                            {% else %}
+                            <span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400">Single Model</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 {% if row.is_hybrid %}text-brand-400 font-bold{% endif %}">
+                            {{ row.test_accuracy }}%
+                        </td>
+                        <td class="px-6 py-4">{{ row.test_precision }}%</td>
+                        <td class="px-6 py-4">{{ row.test_recall }}%</td>
+                        <td class="px-6 py-4">{{ row.test_f1 }}%</td>
+                        <td class="px-6 py-4 text-cyan-400">{{ row.test_auc }}%</td>
+                        <td class="px-6 py-4 text-slate-300">
+                            {{ row.cv_accuracy }}% <span class="text-slate-500 text-[10px]">(±{{ row.cv_accuracy_std }}%)</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Confusion Matrix Breakdown Cards -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+        <div class="pb-4 border-b border-slate-800">
+            <h3 class="text-base font-bold text-white">Ensemble Confusion Matrix (Test Partition: 61 Samples)</h3>
+            <p class="text-xs text-slate-400">True Negatives, False Positives, False Negatives, and True Positives on unseen data</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            
+            <!-- 2x2 Matrix Graphic -->
+            <div class="max-w-md mx-auto w-full space-y-2">
+                <div class="text-center text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">Predicted Classification</div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- True Negative -->
+                    <div class="p-5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 text-center space-y-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300">True Negative (TN)</span>
+                        <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.confusion_matrix.tn }}</div>
+                        <p class="text-[11px] text-slate-400">Correctly classified healthy</p>
+                    </div>
+
+                    <!-- False Positive (Type I Error) -->
+                    <div class="p-5 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-center space-y-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300">False Positive (FP)</span>
+                        <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.confusion_matrix.fp }}</div>
+                        <p class="text-[11px] text-slate-400">Type I error (False alarm)</p>
+                    </div>
+
+                    <!-- False Negative (Type II Error) -->
+                    <div class="p-5 rounded-2xl bg-rose-950/30 border border-rose-500/30 text-center space-y-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-300">False Negative (FN)</span>
+                        <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.confusion_matrix.fn }}</div>
+                        <p class="text-[11px] text-slate-400">Type II error (Missed risk)</p>
+                    </div>
+
+                    <!-- True Positive -->
+                    <div class="p-5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 text-center space-y-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-300">True Positive (TP)</span>
+                        <div class="text-3xl font-extrabold text-white font-mono">{{ hybrid_row.confusion_matrix.tp }}</div>
+                        <p class="text-[11px] text-slate-400">Correctly detected coronary risk</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clinical Interpretation -->
+            <div class="space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Clinical Diagnostic Significance</h4>
+                <p>
+                    In cardiovascular diagnostics, minimizing <strong class="text-rose-400">False Negatives (Type II Errors)</strong> is paramount: failing to detect active coronary ischemia can lead to untreated myocardial infarction.
+                </p>
+                <p>
+                    Our Hybrid Voting Ensemble achieves a sensitivity (recall) of <strong class="text-emerald-400 font-mono">{{ hybrid_row.test_recall }}%</strong> with only <strong class="text-rose-400 font-mono">{{ hybrid_row.confusion_matrix.fn }} false negatives</strong> across the test set, substantially outperforming weaker baseline models like Decision Trees.
+                </p>
+                <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs">
+                    <strong class="text-slate-200 block mb-1">Stratification Note:</strong>
+                    The train/test split maintains identical class ratios (164 healthy : 139 disease) across both training and test partitions, preventing class imbalance skew.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const labels = {{ model_labels_json|safe }};
+        const metricData = {
+            acc: {{ acc_scores_json|safe }},
+            f1: {{ f1_scores_json|safe }},
+            auc: {{ auc_scores_json|safe }},
+            prec: {{ prec_scores_json|safe }},
+            rec: {{ rec_scores_json|safe }}
+        };
+
+        const titles = {
+            acc: 'Test Accuracy (%)',
+            f1: 'F1-Score (%)',
+            auc: 'ROC-AUC Area Under Curve (%)',
+            prec: 'Precision (%)',
+            rec: 'Recall / Sensitivity (%)'
+        };
+
+        const ctx = document.getElementById('benchmarkComparisonChart');
+        let chartInstance = null;
+
+        function renderChart(metricKey) {
+            const data = metricData[metricKey];
+            const title = titles[metricKey];
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: data,
+                        backgroundColor: labels.map(l => l.includes('Hybrid') ? '#2dd4bf' : (l.includes('Stacking') ? '#38bdf8' : 'rgba(99, 102, 241, 0.45)')),
+                        borderColor: labels.map(l => l.includes('Hybrid') ? '#0d9488' : (l.includes('Stacking') ? '#0284c7' : '#6366f1')),
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 65,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.06)' },
+                            ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 }, callback: v => v + '%' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#cbd5e1', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (item) => ` ${title}: ${item.raw}%`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.switchChartMetric = function(key) {
+            ['acc', 'f1', 'auc', 'prec', 'rec'].forEach(k => {
+                const btn = document.getElementById('btn-' + k);
+                if (k === key) {
+                    btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-white transition-all';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all';
+                }
+            });
+            renderChart(key);
+        };
+
+        renderChart('acc');
+    });
+</script>
+{% endblock %}

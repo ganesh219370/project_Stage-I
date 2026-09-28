@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In — CardioPulse AI Platform{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-5xl glass-panel rounded-3xl border border-slate-700/80 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        
+        <!-- Left Column: Health-Tech Branding & Visual Telemetry (Desktop) -->
+        <div class="lg:col-span-5 bg-gradient-to-br from-navy-900 via-brand-950 to-slate-900 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800 relative overflow-hidden">
+            <!-- Ambient glow -->
+            <div class="absolute -top-24 -left-24 w-60 h-60 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 space-y-6">
+                <!-- Brand Badge -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                        <i class="fa-solid fa-heart-pulse text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white tracking-tight">CardioPulse AI</h2>
+                        <p class="text-[11px] text-slate-400">Cardiology Decision Support</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-4">
+                    <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-xs font-mono font-medium border border-brand-500/30">
+                        Physician & Researcher Access
+                    </span>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white leading-snug">
+                        Precision Analytics for Cardiovascular Risk
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        Access multi-model ML assessments, patient longitudinal history, and soft-voting ensemble predictions.
+                    </p>
+                </div>
+
+                <!-- Telemetry Micro-Widget -->
+                <div class="glass-panel-light p-4 rounded-xl border border-slate-700/60 space-y-3">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-mono">HYBRID VOTING ENSEMBLE</span>
+                        <span class="text-emerald-400 font-semibold font-mono">86.89% ACC</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                        <div class="bg-gradient-to-r from-brand-400 to-emerald-400 h-2 rounded-full" style="width: 87%"></div>
+                    </div>
+                    <div class="flex justify-between text-[11px] text-slate-400">
+                        <span>ROC-AUC: 95.13%</span>
+                        <span>Sensitivity: 92.86%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Highlights -->
+            <div class="relative z-10 pt-8 space-y-3 border-t border-slate-800/80">
+                <div class="flex items-center space-x-2 text-xs text-slate-400">
+                    <i class="fa-solid fa-lock text-brand-400"></i>
+                    <span>Secure session management & hashed credentials</span>
+                </div>
+                <div class="flex items-center space-x-2 text-xs text-slate-400">
+                    <i class="fa-solid fa-shield-halved text-brand-400"></i>
+                    <span>Isolated clinical prediction records</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Authentication Form -->
+        <div class="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-center bg-navy-950/60">
+            <div class="max-w-md w-full mx-auto space-y-6">
+                
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Welcome back</h2>
+                    <p class="text-sm text-slate-400 mt-1">Please enter your credentials to access the clinical portal.</p>
+                </div>
+
+                <!-- Quick Demo Login Fill Shortcut -->
+                <div class="p-3 rounded-xl bg-slate-800/50 border border-slate-700/70 flex items-center justify-between text-xs">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-user-doctor text-brand-400"></i>
+                        <span class="text-slate-300">Quick Demo Account:</span>
+                    </div>
+                    <button type="button" onclick="fillDemoUser()" class="px-2.5 py-1 rounded-lg bg-brand-500/20 hover:bg-brand-500/30 text-brand-300 font-mono font-medium transition-colors">
+                        Auto-fill Doctor
+                    </button>
+                </div>
+
+                <form method="POST" action="{% url 'login' %}" id="loginForm" class="space-y-5">
+                    {% csrf_token %}
+
+                    <!-- Username or Email Field -->
+                    <div class="space-y-1.5">
+                        <label for="id_username_or_email" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                            Username or Email Address
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-regular fa-user text-sm"></i>
+                            </span>
+                            <input type="text" name="username_or_email" id="id_username_or_email" required
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-900/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all"
+                                placeholder="e.g. dr_sharma or doctor@hospital.org">
+                        </div>
+                    </div>
+
+                    <!-- Password Field with Toggle Visibility -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label for="id_password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                                Password
+                            </label>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-key text-sm"></i>
+                            </span>
+                            <input type="password" name="password" id="id_password" required
+                                class="w-full pl-10 pr-11 py-3 rounded-xl border border-slate-700 bg-slate-900/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all"
+                                placeholder="Enter your account password">
+                            <button type="button" onclick="togglePasswordVisibility('id_password', 'pwdToggleIcon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200">
+                                <i class="fa-regular fa-eye text-sm" id="pwdToggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="flex items-center justify-between text-xs">
+                        <label class="flex items-center space-x-2 text-slate-300 cursor-pointer">
+                            <input type="checkbox" name="remember_me" id="id_remember_me" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-brand-500 focus:ring-brand-500">
+                            <span>Keep me signed in for 14 days</span>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 text-white font-bold text-sm shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition-all flex items-center justify-center space-x-2">
+                        <span>Sign In to Dashboard</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+
+                <!-- Footer link to Register -->
+                <div class="text-center text-xs text-slate-400 pt-2">
+                    Don't have an account yet? 
+                    <a href="{% url 'register' %}" class="text-brand-400 hover:text-brand-300 font-semibold transition-colors">
+                        Create an account
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function togglePasswordVisibility(fieldId, iconId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(iconId);
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    function fillDemoUser() {
+        document.getElementById('id_username_or_email').value = 'dr_sharma';
+        document.getElementById('id_password').value = 'doctor12345';
+    }
+
+    document.getElementById('loginForm')?.addEventListener('submit', function() {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Authenticating...';
+    });
+</script>
+{% endblock %}

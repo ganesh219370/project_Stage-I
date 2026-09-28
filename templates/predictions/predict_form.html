@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Risk Assessment — CardioPulse AI{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Header & Presets Bar -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="space-y-1 relative z-10">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-300 text-xs font-mono">
+                <i class="fa-solid fa-notes-medical"></i>
+                <span>13-Feature Clinical Assessment</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Patient Risk Classification</h1>
+            <p class="text-sm text-slate-300">Enter physiological & clinical parameters to run the hybrid multi-model ensemble.</p>
+        </div>
+
+        <!-- Sample Case Auto-fill for Examiners / Doctors -->
+        <div class="flex flex-wrap items-center gap-2 relative z-10">
+            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider mr-1">Examiner Presets:</span>
+            <button type="button" onclick="loadHighRiskPreset()" class="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold border border-rose-500/30 transition-all flex items-center space-x-1">
+                <i class="fa-solid fa-triangle-exclamation text-[10px]"></i>
+                <span>High-Risk Case</span>
+            </button>
+            <button type="button" onclick="loadHealthyPreset()" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-semibold border border-emerald-500/30 transition-all flex items-center space-x-1">
+                <i class="fa-solid fa-heart text-[10px]"></i>
+                <span>Healthy Case</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Assessment Form -->
+    <form method="POST" action="{% url 'predict' %}" id="assessmentForm" class="space-y-8">
+        {% csrf_token %}
+
+        <!-- SECTION 1: Patient Identity & Basic Information -->
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+            <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
+                <div class="w-8 h-8 rounded-lg bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-sm">1</div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Patient Identity & Basic Demographics</h3>
+                    <p class="text-xs text-slate-400">Baseline subject identification and age/sex classification</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Patient Name / Identifier -->
+                <div class="space-y-2">
+                    <label for="id_patient_name" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                        Patient / Case Identifier
+                    </label>
+                    {{ form.patient_name }}
+                    <p class="text-[11px] text-slate-400">Optional internal reference or patient code.</p>
+                </div>
+
+                <!-- Age -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="id_age" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                            Age (Years)
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-mono">18 – 100</span>
+                    </div>
+                    {{ form.age }}
+                    <p class="text-[11px] text-slate-400">Physiological chronological age.</p>
+                </div>
+
+                <!-- Sex -->
+                <div class="space-y-2">
+                    <label for="id_sex" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                        Biological Sex
+                    </label>
+                    {{ form.sex }}
+                    <p class="text-[11px] text-slate-400">1: Male, 0: Female.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Cardiovascular Measurements -->
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+            <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-sm">2</div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Cardiovascular Physical Measurements</h3>
+                    <p class="text-xs text-slate-400">Quantitative hemodynamic and lipid parameters</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Resting Blood Pressure (trestbps) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="id_trestbps" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                            Resting Blood Pressure
+                            <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-circle-question text-xs"></i>
+                                <span class="tooltip-content w-56 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                    Systolic blood pressure on hospital admission in mm Hg (Normal: 90-120 mmHg).
+                                </span>
+                            </span>
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-mono">mm Hg</span>
+                    </div>
+                    {{ form.trestbps }}
+                    <p class="text-[11px] text-slate-400">Acceptable range: 60 - 240 mm Hg.</p>
+                </div>
+
+                <!-- Serum Cholesterol (chol) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="id_chol" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                            Serum Cholesterol
+                            <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-circle-question text-xs"></i>
+                                <span class="tooltip-content w-56 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                    Total serum cholesterol in mg/dL. Values &gt; 200 mg/dL indicate elevated lipid risk.
+                                </span>
+                            </span>
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-mono">mg/dL</span>
+                    </div>
+                    {{ form.chol }}
+                    <p class="text-[11px] text-slate-400">Acceptable range: 100 - 600 mg/dL.</p>
+                </div>
+
+                <!-- Maximum Heart Rate Achieved (thalach) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="id_thalach" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                            Max Heart Rate
+                            <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-circle-question text-xs"></i>
+                                <span class="tooltip-content w-56 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                    Peak heart rate reached during maximal cardiac treadmill or ergometer exercise.
+                                </span>
+                            </span>
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-mono">bpm</span>
+                    </div>
+                    {{ form.thalach }}
+                    <p class="text-[11px] text-slate-400">Acceptable range: 60 - 230 bpm.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Clinical Diagnostics & Stress Test Information -->
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+            <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">3</div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Diagnostic & Stress Test Findings</h3>
+                    <p class="text-xs text-slate-400">Angina patterns, electrocardiogram, and nuclear scintigraphy results</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Chest Pain Type (cp) -->
+                <div class="space-y-2">
+                    <label for="id_cp" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                        Chest Pain Classification (CP)
+                        <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-circle-question text-xs"></i>
+                            <span class="tooltip-content w-64 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                Type 1: Typical Angina; Type 2: Atypical; Type 3: Non-anginal; Type 4: Asymptomatic (Silent Ischemia).
+                            </span>
+                        </span>
+                    </label>
+                    {{ form.cp }}
+                </div>
+
+                <!-- Exercise Induced Angina (exang) -->
+                <div class="space-y-2">
+                    <label for="id_exang" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                        Exercise-Induced Angina (Exang)
+                    </label>
+                    {{ form.exang }}
+                </div>
+
+                <!-- Resting ECG (restecg) -->
+                <div class="space-y-2">
+                    <label for="id_restecg" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                        Resting ECG Results
+                        <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-circle-question text-xs"></i>
+                            <span class="tooltip-content w-64 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                0: Normal; 1: ST-T wave inversion/elevation; 2: Left Ventricular Hypertrophy (Estes criteria).
+                            </span>
+                        </span>
+                    </label>
+                    {{ form.restecg }}
+                </div>
+
+                <!-- Fasting Blood Sugar (fbs) -->
+                <div class="space-y-2">
+                    <label for="id_fbs" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                        Fasting Blood Sugar &gt; 120 mg/dL
+                    </label>
+                    {{ form.fbs }}
+                </div>
+
+                <!-- ST Depression (oldpeak) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="id_oldpeak" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                            ST Depression (Oldpeak)
+                            <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-circle-question text-xs"></i>
+                                <span class="tooltip-content w-64 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                    Electrocardiographic ST depression induced by exercise relative to rest in millimeters (mm).
+                                </span>
+                            </span>
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-mono">0.0 – 7.0 mm</span>
+                    </div>
+                    {{ form.oldpeak }}
+                </div>
+
+                <!-- ST Slope (slope) -->
+                <div class="space-y-2">
+                    <label for="id_slope" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                        Slope of Peak Exercise ST Segment
+                        <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-circle-question text-xs"></i>
+                            <span class="tooltip-content w-64 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                1: Upsloping (normal response); 2: Flat (ischemia); 3: Downsloping (severe ischemia).
+                            </span>
+                        </span>
+                    </label>
+                    {{ form.slope }}
+                </div>
+
+                <!-- Major Vessels (ca) -->
+                <div class="space-y-2">
+                    <label for="id_ca" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                        Major Vessels Colored by Fluoroscopy (0-3)
+                        <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-circle-question text-xs"></i>
+                            <span class="tooltip-content w-64 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                Number of primary coronary arteries visibly narrowed under fluoroscopic dye angiography.
+                            </span>
+                        </span>
+                    </label>
+                    {{ form.ca }}
+                </div>
+
+                <!-- Thalassemia (thal) -->
+                <div class="space-y-2">
+                    <label for="id_thal" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                        Thallium Scintigraphy (Thal)
+                        <span class="has-tooltip ml-1.5 cursor-pointer text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-circle-question text-xs"></i>
+                            <span class="tooltip-content w-64 p-2 rounded-lg bg-slate-900 border border-slate-700 text-[11px] text-slate-300 shadow-xl">
+                                3: Normal perfusion; 6: Fixed perfusion defect (old infarction); 7: Reversible defect (inducible ischemia).
+                            </span>
+                        </span>
+                    </label>
+                    {{ form.thal }}
+                </div>
+            </div>
+
+            <!-- Optional Clinical Notes -->
+            <div class="space-y-2 pt-2 border-t border-slate-800">
+                <label for="id_notes" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Physician / Clinical Notes (Optional)
+                </label>
+                {{ form.notes }}
+            </div>
+        </div>
+
+        <!-- Submit & Loading Action -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+            <div class="text-xs text-slate-400 flex items-center space-x-2">
+                <i class="fa-solid fa-shield-heart text-brand-400"></i>
+                <span>Ensemble analyzes input across 6 classifiers with calibrated soft voting</span>
+            </div>
+
+            <div class="flex items-center space-x-3 w-full sm:w-auto">
+                <button type="reset" class="px-5 py-3 rounded-xl glass-panel-light hover:bg-slate-800 text-slate-300 hover:text-white font-semibold text-sm border border-slate-700 transition-colors">
+                    Reset Fields
+                </button>
+                <button type="submit" id="analyzeBtn" class="flex-1 sm:flex-none px-8 py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 text-white font-bold text-sm shadow-xl shadow-brand-500/25 hover:shadow-brand-500/40 transition-all flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Analyze Patient</span>
+                </button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<!-- Modal Loading Overlay for Clinical Inference -->
+<div id="loadingModal" class="fixed inset-0 bg-navy-950/80 backdrop-blur-md z-50 flex items-center justify-center hidden">
+    <div class="glass-panel p-8 rounded-3xl border border-brand-500/40 max-w-sm w-full text-center space-y-4 shadow-2xl">
+        <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full border-4 border-brand-500/20 border-t-brand-400 animate-spin"></div>
+            <i class="fa-solid fa-heart-pulse text-2xl text-brand-400 animate-pulse"></i>
+        </div>
+        <div class="space-y-1">
+            <h3 class="text-lg font-bold text-white">Analyzing Clinical Parameters...</h3>
+            <p class="text-xs text-slate-300">Preprocessing features & calculating hybrid voting consensus...</p>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-brand-400 to-cyan-400 h-full w-2/3 animate-pulse"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Presets for rapid evaluation
+    function loadHighRiskPreset() {
+        document.getElementById('id_patient_name').value = 'Arthur Pendelton (High Risk Case)';
+        document.getElementById('id_age').value = '65';
+        document.getElementById('id_sex').value = '1';
+        document.getElementById('id_cp').value = '4'; // Asymptomatic / silent
+        document.getElementById('id_trestbps').value = '160';
+        document.getElementById('id_chol').value = '286';
+        document.getElementById('id_fbs').value = '0';
+        document.getElementById('id_restecg').value = '2'; // LVH
+        document.getElementById('id_thalach').value = '108'; // low max hr
+        document.getElementById('id_exang').value = '1'; // induced angina
+        document.getElementById('id_oldpeak').value = '2.6'; // strong ST depression
+        document.getElementById('id_slope').value = '2'; // flat
+        document.getElementById('id_ca').value = '3'; // 3 vessels colored
+        document.getElementById('id_thal').value = '7'; // reversible defect
+        document.getElementById('id_notes').value = 'Referred for treadmill stress test with multiple coronary risk indicators.';
+    }
+
+    function loadHealthyPreset() {
+        document.getElementById('id_patient_name').value = 'Elena Gomez (Healthy Baseline Case)';
+        document.getElementById('id_age').value = '38';
+        document.getElementById('id_sex').value = '0';
+        document.getElementById('id_cp').value = '2'; // Atypical / non-ischemic
+        document.getElementById('id_trestbps').value = '115';
+        document.getElementById('id_chol').value = '180';
+        document.getElementById('id_fbs').value = '0';
+        document.getElementById('id_restecg').value = '0'; // normal ECG
+        document.getElementById('id_thalach').value = '175'; // robust max hr
+        document.getElementById('id_exang').value = '0'; // no angina
+        document.getElementById('id_oldpeak').value = '0.0'; // no ST depression
+        document.getElementById('id_slope').value = '1'; // upsloping
+        document.getElementById('id_ca').value = '0'; // 0 vessels colored
+        document.getElementById('id_thal').value = '3'; // normal perfusion
+        document.getElementById('id_notes').value = 'Normal routine fitness screening; no cardiac symptoms.';
+    }
+
+    // Form submission animation trigger
+    document.getElementById('assessmentForm')?.addEventListener('submit', function() {
+        document.getElementById('loadingModal').classList.remove('hidden');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,226 @@
+{
+  "Logistic Regression": {
+    "test_accuracy": 86.89,
+    "test_precision": 81.25,
+    "test_recall": 92.86,
+    "test_f1": 86.67,
+    "test_auc": 95.13,
+    "cv_accuracy": 82.64,
+    "cv_accuracy_std": 1.72,
+    "cv_f1": 80.07,
+    "cv_auc": 89.6,
+    "confusion_matrix": {
+      "tn": 27,
+      "fp": 6,
+      "fn": 2,
+      "tp": 26,
+      "matrix": [
+        [
+          27,
+          6
+        ],
+        [
+          2,
+          26
+        ]
+      ]
+    },
+    "is_hybrid": false
+  },
+  "Random Forest": {
+    "test_accuracy": 90.16,
+    "test_precision": 86.67,
+    "test_recall": 92.86,
+    "test_f1": 89.66,
+    "test_auc": 96.0,
+    "cv_accuracy": 80.16,
+    "cv_accuracy_std": 1.06,
+    "cv_f1": 77.88,
+    "cv_auc": 88.19,
+    "confusion_matrix": {
+      "tn": 29,
+      "fp": 4,
+      "fn": 2,
+      "tp": 26,
+      "matrix": [
+        [
+          29,
+          4
+        ],
+        [
+          2,
+          26
+        ]
+      ]
+    },
+    "is_hybrid": false
+  },
+  "Support Vector Machine": {
+    "test_accuracy": 85.25,
+    "test_precision": 80.65,
+    "test_recall": 89.29,
+    "test_f1": 84.75,
+    "test_auc": 94.37,
+    "cv_accuracy": 82.23,
+    "cv_accuracy_std": 2.49,
+    "cv_f1": 79.3,
+    "cv_auc": 88.28,
+    "confusion_matrix": {
+      "tn": 27,
+      "fp": 6,
+      "fn": 3,
+      "tp": 25,
+      "matrix": [
+        [
+          27,
+          6
+        ],
+        [
+          3,
+          25
+        ]
+      ]
+    },
+    "is_hybrid": false
+  },
+  "K-Nearest Neighbors": {
+    "test_accuracy": 83.61,
+    "test_precision": 76.47,
+    "test_recall": 92.86,
+    "test_f1": 83.87,
+    "test_auc": 94.53,
+    "cv_accuracy": 80.99,
+    "cv_accuracy_std": 3.98,
+    "cv_f1": 78.47,
+    "cv_auc": 87.93,
+    "confusion_matrix": {
+      "tn": 25,
+      "fp": 8,
+      "fn": 2,
+      "tp": 26,
+      "matrix": [
+        [
+          25,
+          8
+        ],
+        [
+          2,
+          26
+        ]
+      ]
+    },
+    "is_hybrid": false
+  },
+  "Decision Tree": {
+    "test_accuracy": 78.69,
+    "test_precision": 74.19,
+    "test_recall": 82.14,
+    "test_f1": 77.97,
+    "test_auc": 85.98,
+    "cv_accuracy": 73.13,
+    "cv_accuracy_std": 5.63,
+    "cv_f1": 69.87,
+    "cv_auc": 77.77,
+    "confusion_matrix": {
+      "tn": 25,
+      "fp": 8,
+      "fn": 5,
+      "tp": 23,
+      "matrix": [
+        [
+          25,
+          8
+        ],
+        [
+          5,
+          23
+        ]
+      ]
+    },
+    "is_hybrid": false
+  },
+  "Gradient Boosting": {
+    "test_accuracy": 83.61,
+    "test_precision": 76.47,
+    "test_recall": 92.86,
+    "test_f1": 83.87,
+    "test_auc": 94.91,
+    "cv_accuracy": 78.49,
+    "cv_accuracy_std": 3.94,
+    "cv_f1": 76.37,
+    "cv_auc": 85.36,
+    "confusion_matrix": {
+      "tn": 25,
+      "fp": 8,
+      "fn": 2,
+      "tp": 26,
+      "matrix": [
+        [
+          25,
+          8
+        ],
+        [
+          2,
+          26
+        ]
+      ]
+    },
+    "is_hybrid": false
+  },
+  "Hybrid Voting Ensemble": {
+    "test_accuracy": 86.89,
+    "test_precision": 81.25,
+    "test_recall": 92.86,
+    "test_f1": 86.67,
+    "test_auc": 95.13,
+    "cv_accuracy": 81.38,
+    "cv_accuracy_std": 3.6,
+    "cv_f1": 78.92,
+    "cv_auc": 88.4,
+    "confusion_matrix": {
+      "tn": 27,
+      "fp": 6,
+      "fn": 2,
+      "tp": 26,
+      "matrix": [
+        [
+          27,
+          6
+        ],
+        [
+          2,
+          26
+        ]
+      ]
+    },
+    "is_hybrid": true
+  },
+  "Stacking Classifier": {
+    "test_accuracy": 88.52,
+    "test_precision": 83.87,
+    "test_recall": 92.86,
+    "test_f1": 88.14,
+    "test_auc": 95.35,
+    "cv_accuracy": 82.64,
+    "cv_accuracy_std": 2.17,
+    "cv_f1": 80.12,
+    "cv_auc": 89.33,
+    "confusion_matrix": {
+      "tn": 28,
+      "fp": 5,
+      "fn": 2,
+      "tp": 26,
+      "matrix": [
+        [
+          28,
+          5
+        ],
+        [
+          2,
+          26
+        ]
+      ]
+    },
+    "is_hybrid": true
+  }
+}

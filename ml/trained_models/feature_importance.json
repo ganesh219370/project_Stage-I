@@ -1,0 +1,67 @@
+[
+  {
+    "feature": "thal",
+    "readable_name": "Thalassemia (3: Normal, 6: Fixed Defect, 7: Reversable Defect)",
+    "importance": 16.25
+  },
+  {
+    "feature": "cp",
+    "readable_name": "Chest Pain Type (1: Typical, 2: Atypical, 3: Non-anginal, 4: Asymptomatic)",
+    "importance": 12.52
+  },
+  {
+    "feature": "ca",
+    "readable_name": "Major Vessels Colored by Fluoroscopy (0-3)",
+    "importance": 11.75
+  },
+  {
+    "feature": "thalach",
+    "readable_name": "Maximum Heart Rate Achieved (bpm)",
+    "importance": 11.69
+  },
+  {
+    "feature": "oldpeak",
+    "readable_name": "ST Depression (Oldpeak)",
+    "importance": 8.71
+  },
+  {
+    "feature": "chol",
+    "readable_name": "Serum Cholesterol (mg/dL)",
+    "importance": 8.03
+  },
+  {
+    "feature": "age",
+    "readable_name": "Age (years)",
+    "importance": 7.27
+  },
+  {
+    "feature": "trestbps",
+    "readable_name": "Resting Blood Pressure (mm Hg)",
+    "importance": 6.65
+  },
+  {
+    "feature": "exang",
+    "readable_name": "Exercise-Induced Angina (0: No, 1: Yes)",
+    "importance": 5.77
+  },
+  {
+    "feature": "slope",
+    "readable_name": "Slope of Peak Exercise ST (1: Upsloping, 2: Flat, 3: Downsloping)",
+    "importance": 4.48
+  },
+  {
+    "feature": "sex",
+    "readable_name": "Sex (0: Female, 1: Male)",
+    "importance": 4.37
+  },
+  {
+    "feature": "restecg",
+    "readable_name": "Resting ECG (0: Normal, 1: ST-T Abnormality, 2: LV Hypertrophy)",
+    "importance": 1.65
+  },
+  {
+    "feature": "fbs",
+    "readable_name": "Fasting Blood Sugar > 120 mg/dL (0: False, 1: True)",
+    "importance": 0.86
+  }
+]

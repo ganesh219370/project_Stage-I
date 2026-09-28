@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+
+{% block title %}Physician Dashboard — CardioPulse AI{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Top Welcome Banner & Quick Action -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-60 h-60 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="space-y-2 relative z-10">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-300 text-xs font-mono">
+                <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
+                <span>Clinical Dashboard Active</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">
+                Welcome back, <span class="gradient-text-teal">{{ user.first_name|default:user.username }}</span>
+            </h1>
+            <p class="text-sm text-slate-300">
+                Cardiovascular Risk Classification Platform • Soft Voting Ensemble Model Online.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 relative z-10 w-full sm:w-auto">
+            <a href="{% url 'predict' %}" class="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 text-white font-bold text-sm shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-stethoscope"></i>
+                <span>New Prediction</span>
+            </a>
+            <a href="{% url 'prediction_history' %}" class="flex-1 sm:flex-none px-5 py-3 rounded-xl glass-panel-light hover:bg-slate-800 text-slate-200 font-semibold text-sm border border-slate-700 transition-all flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>View History</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 5 KPI Stat Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        
+        <!-- Total Predictions -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">Total Cases</span>
+                <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-brand-400">
+                    <i class="fa-solid fa-folder-medical text-sm"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-extrabold text-white font-mono">{{ stats.total_predictions }}</div>
+            <p class="text-[11px] text-slate-400">Recorded assessments</p>
+        </div>
+
+        <!-- High Risk Detected -->
+        <div class="glass-panel p-5 rounded-2xl border border-rose-500/20 bg-rose-950/10 space-y-3">
+            <div class="flex items-center justify-between text-rose-300">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">High Risk</span>
+                <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-400">
+                    <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-extrabold text-rose-400 font-mono">{{ stats.high_risk_count }}</div>
+            <p class="text-[11px] text-slate-400">Require cardiology review</p>
+        </div>
+
+        <!-- Low Risk Detected -->
+        <div class="glass-panel p-5 rounded-2xl border border-emerald-500/20 bg-emerald-950/10 space-y-3">
+            <div class="flex items-center justify-between text-emerald-300">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">Low / No Risk</span>
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <i class="fa-solid fa-circle-check text-sm"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-extrabold text-emerald-400 font-mono">{{ stats.low_risk_count }}</div>
+            <p class="text-[11px] text-slate-400">Negative ischemia screen</p>
+        </div>
+
+        <!-- Average Confidence -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">Avg Confidence</span>
+                <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-cyan-400">
+                    <i class="fa-solid fa-gauge-high text-sm"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-extrabold text-white font-mono">{{ stats.avg_confidence }}%</div>
+            <p class="text-[11px] text-slate-400">Mean model confidence</p>
+        </div>
+
+        <!-- Latest Case -->
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-xs font-bold uppercase tracking-wider font-mono">Latest Case</span>
+                <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-indigo-400">
+                    <i class="fa-solid fa-user-clock text-sm"></i>
+                </div>
+            </div>
+            {% if stats.latest_prediction %}
+            <div class="text-sm font-bold text-white truncate">{{ stats.latest_prediction.patient_name }}</div>
+            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono {% if stats.latest_prediction.prediction == 1 %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% else %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% endif %}">
+                {{ stats.latest_prediction.risk_level }}
+            </span>
+            {% else %}
+            <div class="text-xs text-slate-400 italic">No records yet</div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Charts Section: Prediction Distribution & Longitudinal Timeline -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Timeline Chart (7 Columns) -->
+        <div class="lg:col-span-7 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div>
+                    <h3 class="text-base font-bold text-white">Assessment Probability Trend</h3>
+                    <p class="text-xs text-slate-400">Longitudinal sequence of heart disease probabilities (%)</p>
+                </div>
+                <span class="px-2.5 py-1 rounded bg-slate-800 text-xs font-mono text-brand-300">Timeline</span>
+            </div>
+            
+            <div class="h-64 sm:h-72 w-full">
+                {% if stats.total_predictions > 0 %}
+                <canvas id="timelineChart"></canvas>
+                {% else %}
+                <div class="h-full flex flex-col items-center justify-center text-slate-500 text-xs space-y-2">
+                    <i class="fa-solid fa-chart-line text-2xl"></i>
+                    <span>No assessments recorded yet. Run a prediction to see timeline trends.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Risk Distribution Donut Chart (5 Columns) -->
+        <div class="lg:col-span-5 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div>
+                    <h3 class="text-base font-bold text-white">Risk Distribution</h3>
+                    <p class="text-xs text-slate-400">Class balance across evaluated patients</p>
+                </div>
+                <span class="px-2.5 py-1 rounded bg-slate-800 text-xs font-mono text-cyan-300">Breakdown</span>
+            </div>
+
+            <div class="h-64 sm:h-72 w-full flex items-center justify-center">
+                {% if stats.total_predictions > 0 %}
+                <canvas id="riskDonutChart"></canvas>
+                {% else %}
+                <div class="h-full flex flex-col items-center justify-center text-slate-500 text-xs space-y-2">
+                    <i class="fa-solid fa-chart-pie text-2xl"></i>
+                    <span>Run your first prediction to visualize risk breakdown.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Patient Records Table -->
+    <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+        <div class="p-6 border-b border-slate-800 flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h3 class="text-base font-bold text-white">Recent Clinical Assessments</h3>
+                <p class="text-xs text-slate-400">Recently evaluated patient cases and hybrid ensemble consensus</p>
+            </div>
+            <a href="{% url 'prediction_history' %}" class="text-xs font-semibold text-brand-400 hover:text-brand-300 transition-colors flex items-center space-x-1">
+                <span>View Full Table</span>
+                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-900/60 text-xs uppercase font-mono tracking-wider text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="px-6 py-3.5">Patient / Subject</th>
+                        <th class="px-6 py-3.5">Clinical Profile</th>
+                        <th class="px-6 py-3.5">Classification</th>
+                        <th class="px-6 py-3.5">Probability</th>
+                        <th class="px-6 py-3.5">Confidence</th>
+                        <th class="px-6 py-3.5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                    {% for item in stats.recent_predictions %}
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-white">{{ item.patient_name }}</div>
+                            <div class="text-[11px] text-slate-400">{{ item.created_at|date:"M d, Y • H:i" }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-xs space-y-0.5">
+                            <div>Age: {{ item.age|floatformat:0 }} • {{ item.sex_display }}</div>
+                            <div class="text-slate-400">BP: {{ item.trestbps|floatformat:0 }} mmHg • Chol: {{ item.chol|floatformat:0 }} mg/dL</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if item.prediction == 1 %}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5 animate-pulse"></span>
+                                High Risk
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>
+                                Low Risk
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 font-mono font-bold {% if item.prediction == 1 %}text-rose-400{% else %}text-emerald-400{% endif %}">
+                            {{ item.probability|floatformat:1 }}%
+                        </td>
+                        <td class="px-6 py-4 font-mono text-slate-300">
+                            {{ item.confidence|floatformat:1 }}%
+                        </td>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <a href="{% url 'prediction_result' item.id %}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-brand-300 transition-colors inline-flex items-center space-x-1">
+                                <i class="fa-regular fa-file-lines"></i>
+                                <span>Report</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                            <i class="fa-solid fa-heart-circle-plus text-3xl mb-3 block text-slate-600"></i>
+                            <p class="text-sm font-medium">No patient assessments found.</p>
+                            <a href="{% url 'predict' %}" class="mt-3 inline-block px-4 py-2 rounded-xl bg-brand-500 text-white text-xs font-bold">
+                                Create First Assessment
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const timelineDates = {{ timeline_dates_json|safe }};
+        const timelineProbs = {{ timeline_probs_json|safe }};
+        const timelineLabels = {{ timeline_labels_json|safe }};
+        const highRiskCount = {{ stats.high_risk_count }};
+        const lowRiskCount = {{ stats.low_risk_count }};
+
+        // 1. Timeline Chart
+        const timelineCanvas = document.getElementById('timelineChart');
+        if (timelineCanvas && timelineDates.length > 0) {
+            new Chart(timelineCanvas, {
+                type: 'line',
+                data: {
+                    labels: timelineDates,
+                    datasets: [{
+                        label: 'Heart Disease Probability (%)',
+                        data: timelineProbs,
+                        borderColor: '#2dd4bf',
+                        backgroundColor: 'rgba(45, 212, 191, 0.1)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#14b8a6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.06)' },
+                            ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 }, callback: v => v + '%' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => {
+                                    const idx = items[0].dataIndex;
+                                    return timelineLabels[idx] || items[0].label;
+                                },
+                                label: (item) => ` Probability: ${item.raw}%`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. Risk Donut Chart
+        const donutCanvas = document.getElementById('riskDonutChart');
+        if (donutCanvas && (highRiskCount > 0 || lowRiskCount > 0)) {
+            new Chart(donutCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['High Risk', 'Low / No Risk'],
+                    datasets: [{
+                        data: [highRiskCount, lowRiskCount],
+                        backgroundColor: ['#f43f5e', '#10b981'],
+                        borderColor: '#0f172a',
+                        borderWidth: 3,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#cbd5e1', font: { family: 'Plus Jakarta Sans', size: 12 }, padding: 15 }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

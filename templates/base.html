@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CardioPulse AI — Hybrid Machine Learning Heart Disease Classification{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Academic Hybrid Machine Learning Platform combining Soft Voting ensemble classifiers to optimize heart disease clinical risk classification.{% endblock %}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons (Lucide via unpkg or FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                            950: '#042f2e',
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            850: '#172033',
+                            900: '#0f172a',
+                            950: '#0b1120',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-navy-950 text-slate-100 min-h-screen flex flex-col selection:bg-brand-500/30 selection:text-brand-300">
+
+    <!-- Background Ambient Glows -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute top-1/3 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+        <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    {% include 'navbar.html' %}
+
+    <!-- Django Messages Alerts -->
+    {% if messages %}
+    <div class="relative z-40 max-w-5xl mx-auto px-4 pt-6 w-full">
+        {% for message in messages %}
+        <div class="mb-3 px-4 py-3.5 rounded-xl border flex items-center justify-between shadow-lg text-sm font-medium backdrop-blur-md transition-all duration-300 {% if 'success' in message.tags %}bg-emerald-950/80 border-emerald-500/40 text-emerald-200{% elif 'error' in message.tags %}bg-rose-950/80 border-rose-500/40 text-rose-200{% elif 'warning' in message.tags %}bg-amber-950/80 border-amber-500/40 text-amber-200{% else %}bg-slate-900/80 border-cyan-500/40 text-cyan-200{% endif %}" role="alert">
+            <div class="flex items-center space-x-3">
+                <i class="{% if 'success' in message.tags %}fa-solid fa-circle-check text-emerald-400{% elif 'error' in message.tags %}fa-solid fa-circle-exclamation text-rose-400{% elif 'warning' in message.tags %}fa-solid fa-triangle-exclamation text-amber-400{% else %}fa-solid fa-circle-info text-cyan-400{% endif %} text-lg"></i>
+                <span>{{ message }}</span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Page Content -->
+    <main class="relative z-10 flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
